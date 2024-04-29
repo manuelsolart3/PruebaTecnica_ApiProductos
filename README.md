@@ -1,0 +1,26 @@
+Endpoints implementados
+
+
+a. Crear un nuevo producto (POST):
+Este método se utiliza para agregar un nuevo producto a la base de datos. 
+
+b. Obtener todos los productos (GET):
+Este método recupera todos los productos almacenados en la base de datos y los devuelve como respuesta. 
+
+c. Obtener un producto por su ID (GET):
+Con este método, puedes obtener los detalles de un producto específico proporcionando su ID como parámetro en la solicitud. 
+
+d. Actualizar un producto existente (PATCH):
+Utilizando este método, puedes actualizar los detalles de un producto existente proporcionando su ID y los nuevos datos en la solicitud. 
+
+e. Eliminar un producto por su ID (DELETE):
+Este método permite eliminar un producto de la base de datos proporcionando su ID como parámetro en la solicitud HTTP DELETE. Una vez eliminado, el producto ya no estará disponible en la base de datos.
+
+f. Filtro por nombre (GET):
+Este método permite filtrar los productos por su nombre. Al enviar una solicitud HTTP GET con el nombre deseado como parámetro, la API recuperará los productos que coincidan con ese nombre y los devolverá como respuesta.
+
+g. Filtro por precio ascendente y descendente, entre un rango de precios (GET):
+Con este método puedes filtrar los productos por su precio, ya sea en orden ascendente o descendente, dentro de un rango de precios específico. Al enviar una solicitud HTTP GET con los límites del rango y la indicación del orden.
+
+h. Filtro por descuento ascendente y descendente (GET):
+Similar al filtro por precio, este método te permite filtrar los productos por su descuento, ya sea en orden ascendente o descendente. Al enviar una solicitud HTTP GET con la indicación del orden deseado.
