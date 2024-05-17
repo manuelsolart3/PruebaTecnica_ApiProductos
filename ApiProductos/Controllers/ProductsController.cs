@@ -3,10 +3,12 @@ using ApiProductos.Models.Dtos;
 using ApiProductos.Repositories.IRespository;
 using ApiProductos.Services;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ApiProductos.Controllers
 {
+    
     [ApiController] //indica que es un controlador de API
     [Route("api/productos")] //Ruta Base
     public class ProductsController : ControllerBase //proporciona funcionalidades para los controllers
@@ -23,9 +25,11 @@ namespace ApiProductos.Controllers
         }
         //Decoraciones
         //CrearProducto
+        [Authorize(Roles = "admin")]
         [HttpPost("CrearProducto")]
         [ProducesResponseType(201, Type = typeof(ProductDto))]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
 
         public async Task<IActionResult> CreateProduct([FromForm] CreateProductoDto createProducto)
@@ -35,9 +39,10 @@ namespace ApiProductos.Controllers
             return result;
         }
 
-
+        [AllowAnonymous]
         //obtener todos
         [HttpGet("TotalProductos")]
+        [ResponseCache(CacheProfileName = "PorDefecto30")]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetProducts()
@@ -48,7 +53,7 @@ namespace ApiProductos.Controllers
 
 
 
-
+         [Authorize(Roles = "admin")]
         //Obtener por ID
         [HttpGet("{productId:int}", Name = "GetProduct")]
         public async Task<IActionResult> GetProduct(int productId)
@@ -67,10 +72,11 @@ namespace ApiProductos.Controllers
         }
 
 
-
+        [Authorize(Roles = "admin")]
         //EndPoint Para Elimnar Producto
         [HttpDelete("{productId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> DeleteProduct(int productId)
         {
@@ -87,8 +93,10 @@ namespace ApiProductos.Controllers
 
         //Actualizar
         //Decoraciones
+        [Authorize(Roles = "admin")]
         [HttpPatch("{productId:int}", Name = "UpdateProduct")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> UpdateProduct(int productId, [FromForm] ProductDto productDto)
         {
@@ -141,5 +149,15 @@ namespace ApiProductos.Controllers
             return Ok(productos);
         }
 
+        [HttpGet("Search")]
+        public async Task<IActionResult> SearchProducts(
+            [FromQuery] string name,
+            [FromQuery] decimal? minPrice,
+            [FromQuery] decimal? maxPrice,
+            [FromQuery] decimal? discount)
+        {
+            IEnumerable<GetAllFilters> products = await _ProductService.SearchProducts(name, discount, minPrice, maxPrice);
+            return Ok(products);
+        }
     }
 }

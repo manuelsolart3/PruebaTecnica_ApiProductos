@@ -31,5 +31,8 @@ public interface IProductService
     //Metodo para buscar Descuentos
     Task<List<ProductResponseDto>> GetProductsByDiscount(bool orden);
 
+    //Metodo para Obtener todos
+    Task<IEnumerable<GetAllFilters>> SearchProducts(string Namefilter, decimal? Discount, decimal? minPrice, decimal? maxPrice);
+
 
 }

@@ -32,6 +32,10 @@ namespace ApiProductos.Repositories.IRespository
         //Metodo filtrado descuentos
         Task<List<Product>> GetProductsByDiscount(bool orden);
 
+        
+
+        Task<List<Product>> SearchProducts(string nameFilter, decimal? minPrice, decimal? maxPrice, decimal? discount);
+
         // Método para guardar los cambios en la BD
         Task<bool> Guardar(); 
 

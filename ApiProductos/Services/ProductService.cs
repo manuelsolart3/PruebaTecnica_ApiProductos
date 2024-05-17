@@ -163,8 +163,6 @@ public async Task<IActionResult> CreateProduct(CreateProductoDto createProductoD
     }
 
 
-
-
     // Método para convertir la imagen a una cadena Base64
     private string ConvertToBase64(byte[] image)
     {
@@ -178,7 +176,12 @@ public async Task<IActionResult> CreateProduct(CreateProductoDto createProductoD
         return Convert.ToBase64String(image);
     }
 
-
+    public async Task<IEnumerable<GetAllFilters>> SearchProducts(string Namefilter, decimal? Discount, decimal? minPrice, decimal? maxPrice)
+    {
+        List<Product> products = await _productRepository.SearchProducts(Namefilter, minPrice, maxPrice, Discount);
+        IEnumerable<GetAllFilters> productsMapped = products.Select(product => _mapper.Map<Product, GetAllFilters>(product));
+        return productsMapped;
+    }
 }
    
 

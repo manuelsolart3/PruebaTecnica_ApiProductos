@@ -18,12 +18,12 @@ namespace ApiProductos.Repositories
 
         //Crear producto
         public async Task<bool> CreateProduct(Product product)
-{
-            
-    product.FechaCreacion = DateTime.Now;
-    await _bd.Product.AddAsync(product);
-    return await Guardar();
-}
+        {
+
+            product.FechaCreacion = DateTime.Now;
+            await _bd.Product.AddAsync(product);
+            return await Guardar();
+        }
 
 
         //Obtener todos los productos
@@ -35,10 +35,10 @@ namespace ApiProductos.Repositories
 
         //Obtener por ID
         public async Task<Product> GetProduct(int ProductId)
-{//Realizamos una consulta a la BD
-    return await _bd.Product.FirstOrDefaultAsync(c => c.Id == ProductId);
+        {//Realizamos una consulta a la BD
+            return await _bd.Product.FirstOrDefaultAsync(c => c.Id == ProductId);
             //El metodo First nos ayuda a obtener el primer producto que coincida con el ID
-}
+        }
 
 
         //Eliminar producto
@@ -51,7 +51,7 @@ namespace ApiProductos.Repositories
 
         //actualizar
         public async Task<bool> UpdateProduct(int productId, ProductDto productDto)
-            //se busca el producto en la BD
+        //se busca el producto en la BD
         {
             var existingProduct = await _bd.Product.FindAsync(productId);
 
@@ -70,7 +70,7 @@ namespace ApiProductos.Repositories
             {
                 existingProduct.Descripcion = productDto.Descripcion;
             }
-            
+
             if (productDto.Descuento != null)
             {
                 existingProduct.Descuento = productDto.Descuento.Value;
@@ -113,7 +113,7 @@ namespace ApiProductos.Repositories
             return await query.ToListAsync();
         }
 
-       
+
 
         //Buscar por rango de precios
         public async Task<List<Product>> GetProductsByPriceRange(decimal minPrice, decimal maxPrice, bool ordenAscendente)
@@ -137,6 +137,8 @@ namespace ApiProductos.Repositories
             return await query.ToListAsync();
         }
 
+        //link
+
         //Buscar Descuentos
         public async Task<List<Product>> GetProductsByDiscount(bool ordenAscendente)
         {
@@ -148,6 +150,19 @@ namespace ApiProductos.Repositories
 
 
 
+        //Metodo GetAll
+        public async Task<List<Product>> GetAll(decimal minPrice, decimal maxPrice)
+        {
+            return await _bd.Product.OrderBy(c => c.Nombre).ToListAsync();
+            // Creamos una consulta IQueryable para filtrar los productos por el rango de precios especificado
+            IQueryable<Product> queryP = _bd.Product.Where(p => p.Precio >= minPrice && p.Precio <= maxPrice);
+
+            var queryD = _bd.Product.OrderBy(p => p.Descuento);
+           
+
+            // devolvemos los productos resultantes como una lista
+            return await queryD.ToListAsync();
+        }
 
 
 
@@ -157,5 +172,20 @@ namespace ApiProductos.Repositories
             return await _bd.SaveChangesAsync() >= 0;
         }
 
+      
+
+        public async Task<List<Product>> SearchProducts(string nameFilter, decimal? minPrice, decimal? maxPrice, decimal? discount)
+        {
+            IQueryable<Product> queryable = _bd.Product;
+
+            if (!string.IsNullOrEmpty(nameFilter)) queryable = queryable.Where(product => product.Nombre.Contains(nameFilter));
+            if (minPrice.HasValue) queryable = queryable.Where(product => product.Precio >= minPrice);
+            if (maxPrice.HasValue) queryable = queryable.Where(product => product.Precio <= maxPrice);
+            if (discount.HasValue) queryable = queryable.Where(product => product.Descuento <= discount);
+
+            return await queryable
+                        .OrderBy(product => product.Nombre)
+                        .ToListAsync();
+        }
     }
 }
